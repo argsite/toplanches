@@ -25,6 +25,7 @@
     <header class="bg-orange-600 text-white p-4 sm:p-6 shadow-lg text-center border-b-4 border-black flex flex-col items-center justify-center">
         <!-- Moldura com cantos arredondados otimizada para logo quadrada/retangular -->
         <div class="relative mb-2">
+            <!-- INSIRA A URL OU CAMINHO DA SUA LOGO NO ATRIBUTO 'src' ABAIXO (Ex: logo_toplanches.jpg) -->
             <img id="header-logo" 
                  src="logo_toplanches.jpg" 
                  onerror="this.onerror=null; this.src='https://placehold.co/120x120/000000/ffffff?text=Top+Lanches';" 
@@ -213,7 +214,7 @@
 
     <script>
         // Configurações
-        const WHATSAPP_NUMBER = "5515997025374"; 
+        const WHATSAPP_NUMBER = "5515997025374"; // O número do flyer
         let cart = [];
         
         // Estado temporário do modal de produto
@@ -423,10 +424,10 @@
             const addonsLimitBadge = document.getElementById('modal-adicionais-limit');
             const addonsTitle = document.getElementById('modal-adicionais-title');
             
-            if (type === 'lanche' || type === 'hotdog' || type === 'batata') {
+            if (type === 'lanche') {
                 addonsContainer.classList.remove('hidden');
                 addonsLimitBadge.classList.add('hidden');
-                addonsTitle.innerText = type === 'batata' ? 'Turbine sua porção (Opcional)' : (type === 'hotdog' ? 'Turbine seu cachorro-quente (Opcional)' : 'Turbine seu lanche (Opcional)');
+                addonsTitle.innerText = 'Turbine seu lanche (Opcional)';
                 addonsList.innerHTML = '';
                 dbAdicionais.forEach(add => {
                     currentAdicionais[add.id] = { ...add, qty: 0, isFree: false };
