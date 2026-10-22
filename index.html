@@ -28,17 +28,24 @@
 
     <!-- Menu Superior Deslizante (Sticky) -->
     <nav class="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-200 overflow-x-auto whitespace-nowrap py-3 px-4 flex gap-3 hide-scrollbar items-center">
-        <a href="#sec-lanches" class="px-4 py-2 bg-orange-100 text-orange-700 font-bold rounded-full text-sm hover:bg-orange-200 transition">🍔 Lanches</a>
+        <a href="#sec-lanches" class="px-4 py-2 bg-orange-100 text-orange-700 font-bold rounded-full text-sm hover:bg-orange-200 transition">🍔 Hambúrguer</a>
+        <a href="#sec-hotdog" class="px-4 py-2 bg-yellow-100 text-yellow-700 font-bold rounded-full text-sm hover:bg-yellow-200 transition">🌭 Cachorro-quente</a>
         <a href="#sec-acai" class="px-4 py-2 bg-purple-100 text-purple-700 font-bold rounded-full text-sm hover:bg-purple-200 transition">💜 Açaí</a>
         <a href="#sec-bebidas" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">🥤 Bebidas</a>
     </nav>
 
     <main class="max-w-3xl mx-auto mt-6 px-4">
         
-        <!-- Categoria: Lanches -->
+        <!-- Categoria: Hambúrguer -->
         <h2 id="sec-lanches" class="scroll-mt-24 text-2xl font-black text-gray-900 mb-4 border-b-2 border-orange-500 pb-1 uppercase">Cardápio Hambúrguer</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="menu-lanches">
             <!-- Os itens serão gerados via JS para facilitar a manutenção -->
+        </div>
+
+        <!-- Categoria: Cachorro-quente -->
+        <h2 id="sec-hotdog" class="scroll-mt-24 text-2xl font-black text-gray-900 mb-4 border-b-2 border-yellow-500 pb-1 uppercase mt-8">Cardápio Cachorro Quente</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="menu-hotdog">
+            <!-- Os itens serão gerados via JS -->
         </div>
 
         <!-- Categoria: Açaí -->
@@ -202,6 +209,20 @@
             { id: 'l8', name: 'X TUDO', price: 50.00, desc: 'Pão, hambúrguer artesanal, frango, bacon, calabresa, mussarela, tomate, alface, 1 salsicha, batata palha, ovo, milho, maionese e catupiry.' }
         ];
 
+        const dbHotdog = [
+            { id: 'cq1', name: 'CACHORRO QUENTE SIMPLES', price: 16.00, desc: 'Pão, 1 salsicha, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq2', name: 'CACHORRO QUENTE DUPLO', price: 18.00, desc: 'Pão, 2 salsichas, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq3', name: 'CACHORRO QUENTE BACON', price: 23.00, desc: 'Pão, 2 salsichas, bacon, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq4', name: 'CACHORRO QUENTE SALADA', price: 20.00, desc: 'Pão, 2 salsichas, mussarela, alface, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq5', name: 'CACHORRO QUENTE CALABRESA', price: 22.00, desc: 'Pão, 2 salsichas, calabresa, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq6', name: 'CACHORRO QUENTE OVO', price: 20.00, desc: 'Pão, 2 salsichas, ovo, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq7', name: 'CACHORRO QUENTE FRANGO', price: 23.00, desc: 'Pão, 2 salsichas, frango, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq8', name: 'CACHORRO QUENTE MILHO', price: 21.00, desc: 'Pão, 2 salsichas, milho, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq9', name: 'CACHORRO QUENTE CARNE MOÍDA', price: 26.00, desc: 'Pão, 2 salsichas, carne moída, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq10', name: 'CACHORRO QUENTE CALABACON', price: 26.00, desc: 'Pão, 2 salsichas, calabresa, bacon, mussarela, tomate, molho especial, batata palha e maionese.' },
+            { id: 'cq11', name: 'CACHORRO QUENTE 3 QUEIJOS', price: 26.00, desc: 'Pão, 2 salsichas, requeijão, cheddar, mussarela, tomate, molho especial, batata palha e maionese.' }
+        ];
+
         const dbAdicionais = [
             { id: 'a1', name: 'Hambúrguer', price: 9.00 },
             { id: 'a2', name: 'Bacon', price: 6.00 },
@@ -253,6 +274,11 @@
                 containerLanches.innerHTML += createProductCard(item, 'lanche');
             });
 
+            const containerHotdog = document.getElementById('menu-hotdog');
+            dbHotdog.forEach(item => {
+                containerHotdog.innerHTML += createProductCard(item, 'hotdog');
+            });
+
             const containerAcai = document.getElementById('menu-acai');
             dbAcai.forEach(item => {
                 containerAcai.innerHTML += createProductCard(item, 'acai');
@@ -265,8 +291,8 @@
         }
 
         function createProductCard(item, type) {
-            let badgeColor = type === 'acai' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-600';
-            let priceColor = type === 'acai' ? 'text-purple-700' : 'text-orange-600';
+            let badgeColor = type === 'acai' ? 'bg-purple-100 text-purple-700' : (type === 'hotdog' ? 'bg-yellow-100 text-yellow-700' : 'bg-orange-100 text-orange-600');
+            let priceColor = type === 'acai' ? 'text-purple-700' : (type === 'hotdog' ? 'text-yellow-700' : 'text-orange-600');
 
             return `
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition cursor-pointer" onclick='openProductModal(${JSON.stringify(item)}, "${type}")'>
@@ -300,10 +326,10 @@
             const addonsLimitBadge = document.getElementById('modal-adicionais-limit');
             const addonsTitle = document.getElementById('modal-adicionais-title');
             
-            if (type === 'lanche') {
+            if (type === 'lanche' || type === 'hotdog') {
                 addonsContainer.classList.remove('hidden');
                 addonsLimitBadge.classList.add('hidden');
-                addonsTitle.innerText = 'Turbine seu lanche (Opcional)';
+                addonsTitle.innerText = type === 'hotdog' ? 'Turbine seu cachorro-quente (Opcional)' : 'Turbine seu lanche (Opcional)';
                 addonsList.innerHTML = '';
                 dbAdicionais.forEach(add => {
                     currentAdicionais[add.id] = { ...add, qty: 0, isFree: false };
