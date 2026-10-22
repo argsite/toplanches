@@ -30,6 +30,7 @@
     <nav class="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-200 overflow-x-auto whitespace-nowrap py-3 px-4 flex gap-3 hide-scrollbar items-center">
         <a href="#sec-lanches" class="px-4 py-2 bg-orange-100 text-orange-700 font-bold rounded-full text-sm hover:bg-orange-200 transition">🍔 Hambúrguer</a>
         <a href="#sec-hotdog" class="px-4 py-2 bg-yellow-100 text-yellow-700 font-bold rounded-full text-sm hover:bg-yellow-200 transition">🌭 Cachorro-quente</a>
+        <a href="#sec-batatas" class="px-4 py-2 bg-amber-100 text-amber-700 font-bold rounded-full text-sm hover:bg-amber-200 transition">🍟 Batatas</a>
         <a href="#sec-acai" class="px-4 py-2 bg-purple-100 text-purple-700 font-bold rounded-full text-sm hover:bg-purple-200 transition">💜 Açaí</a>
         <a href="#sec-bebidas" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">🥤 Bebidas</a>
     </nav>
@@ -45,6 +46,12 @@
         <!-- Categoria: Cachorro-quente -->
         <h2 id="sec-hotdog" class="scroll-mt-24 text-2xl font-black text-gray-900 mb-4 border-b-2 border-yellow-500 pb-1 uppercase mt-8">Cardápio Cachorro Quente</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="menu-hotdog">
+            <!-- Os itens serão gerados via JS -->
+        </div>
+
+        <!-- Categoria: Batatas -->
+        <h2 id="sec-batatas" class="scroll-mt-24 text-2xl font-black text-gray-900 mb-4 border-b-2 border-amber-500 pb-1 uppercase mt-8">Cardápio Batatas</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="menu-batatas">
             <!-- Os itens serão gerados via JS -->
         </div>
 
@@ -223,6 +230,18 @@
             { id: 'cq11', name: 'CACHORRO QUENTE 3 QUEIJOS', price: 26.00, desc: 'Pão, 2 salsichas, requeijão, cheddar, mussarela, tomate, molho especial, batata palha e maionese.' }
         ];
 
+        const dbBatatas = [
+            { id: 'bt1', name: 'BATATA FRITA SIMPLES - P', price: 8.00, desc: 'Porção Pequena' },
+            { id: 'bt2', name: 'BATATA FRITA SIMPLES - G', price: 18.00, desc: 'Porção Grande' },
+            { id: 'bt3', name: 'BATATA FRITA SIMPLES - GG', price: 28.00, desc: 'Porção GG' },
+            { id: 'bt4', name: 'BATATA COM CHEDDAR E BACON - P', price: 18.00, desc: 'Porção Pequena' },
+            { id: 'bt5', name: 'BATATA COM CHEDDAR E BACON - G', price: 32.00, desc: 'Porção Grande' },
+            { id: 'bt6', name: 'BATATA COM CHEDDAR E BACON - GG', price: 48.00, desc: 'Porção GG' },
+            { id: 'bt7', name: 'BATATA CHEDDAR, BACON E REQUEIJÃO - P', price: 22.00, desc: 'Porção Pequena' },
+            { id: 'bt8', name: 'BATATA CHEDDAR, BACON E REQUEIJÃO - G', price: 37.00, desc: 'Porção Grande' },
+            { id: 'bt9', name: 'BATATA CHEDDAR, BACON E REQUEIJÃO - GG', price: 54.00, desc: 'Porção GG' }
+        ];
+
         const dbAdicionais = [
             { id: 'a1', name: 'Hambúrguer', price: 9.00 },
             { id: 'a2', name: 'Bacon', price: 6.00 },
@@ -279,6 +298,11 @@
                 containerHotdog.innerHTML += createProductCard(item, 'hotdog');
             });
 
+            const containerBatatas = document.getElementById('menu-batatas');
+            dbBatatas.forEach(item => {
+                containerBatatas.innerHTML += createProductCard(item, 'batata');
+            });
+
             const containerAcai = document.getElementById('menu-acai');
             dbAcai.forEach(item => {
                 containerAcai.innerHTML += createProductCard(item, 'acai');
@@ -291,8 +315,13 @@
         }
 
         function createProductCard(item, type) {
-            let badgeColor = type === 'acai' ? 'bg-purple-100 text-purple-700' : (type === 'hotdog' ? 'bg-yellow-100 text-yellow-700' : 'bg-orange-100 text-orange-600');
-            let priceColor = type === 'acai' ? 'text-purple-700' : (type === 'hotdog' ? 'text-yellow-700' : 'text-orange-600');
+            let badgeColor = type === 'acai' ? 'bg-purple-100 text-purple-700' : 
+                             (type === 'hotdog' ? 'bg-yellow-100 text-yellow-700' : 
+                             (type === 'batata' ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-600'));
+            
+            let priceColor = type === 'acai' ? 'text-purple-700' : 
+                             (type === 'hotdog' ? 'text-yellow-700' : 
+                             (type === 'batata' ? 'text-amber-700' : 'text-orange-600'));
 
             return `
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition cursor-pointer" onclick='openProductModal(${JSON.stringify(item)}, "${type}")'>
@@ -326,10 +355,10 @@
             const addonsLimitBadge = document.getElementById('modal-adicionais-limit');
             const addonsTitle = document.getElementById('modal-adicionais-title');
             
-            if (type === 'lanche' || type === 'hotdog') {
+            if (type === 'lanche' || type === 'hotdog' || type === 'batata') {
                 addonsContainer.classList.remove('hidden');
                 addonsLimitBadge.classList.add('hidden');
-                addonsTitle.innerText = type === 'hotdog' ? 'Turbine seu cachorro-quente (Opcional)' : 'Turbine seu lanche (Opcional)';
+                addonsTitle.innerText = type === 'batata' ? 'Turbine sua porção (Opcional)' : (type === 'hotdog' ? 'Turbine seu cachorro-quente (Opcional)' : 'Turbine seu lanche (Opcional)');
                 addonsList.innerHTML = '';
                 dbAdicionais.forEach(add => {
                     currentAdicionais[add.id] = { ...add, qty: 0, isFree: false };
