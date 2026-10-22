@@ -532,7 +532,7 @@
 
             let borderClass = type === 'combo' ? 'border-black border-2 shadow-md' : 'border-gray-100 border shadow-sm hover:shadow-md';
             let comboRibbon = type === 'combo' ? `<div class="absolute -right-8 top-5 bg-orange-600 text-white text-[10px] font-black px-10 py-1 shadow-sm rotate-45 uppercase tracking-wider">Combo</div>` : '';
-            let freeDeliveryTag = item.freeDelivery ? `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1">🚚 Entrega Grátis</span>` : '';
+            let freeDeliveryTag = item.freeDelivery ? `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1">🚚 Entrega Inclusa</span>` : '';
 
             return `
             <div class="bg-white p-5 rounded-2xl ${borderClass} flex flex-col justify-between transition cursor-pointer relative overflow-hidden" onclick='openProductModal(${JSON.stringify(item)}, "${type}")'>
