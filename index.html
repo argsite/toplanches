@@ -245,7 +245,7 @@
 
         // BANCO DE DADOS: MAIS PEDIDOS (CARROSSEL)
         // Você pode adicionar mais fotos e itens aqui conforme desejar!
-        const dbMaisPedidos = [
+             const dbMaisPedidos = [
             {
                 id: 'l6', // ID do item no banco (ex: l6 = DUPLO BACON CHEDDAR)
                 type: 'lanche',
@@ -350,9 +350,9 @@
         ];
 
         const dbCombosBatata = [
-            { id: 'cb13', name: 'SUPER COMBO X-SALADA', price: 78.00, desc: '2 X-Salada, 1 Kuat Guaraná 2L e 1 Batata Grande.' },
-            { id: 'cb14', name: 'SUPER COMBO X-BACON', price: 88.00, desc: '2 X-Bacon, 1 Coca-Cola 2L e 1 Batata Grande.' },
-            { id: 'cb15', name: 'SUPER COMBO CACHORRO DUPLO', price: 68.00, desc: '2 Cachorros Duplos, 1 Coca-Cola 2L e 1 Batata Grande.' }
+            { id: 'cb13', name: 'SUPER COMBO X-SALADA', price: 78.00, desc: '2 X-Salada, 1 Kuat Guaraná 2L e 1 Batata Grande.', freeDelivery: true },
+            { id: 'cb14', name: 'SUPER COMBO X-BACON', price: 88.00, desc: '2 X-Bacon, 1 Coca-Cola 2L e 1 Batata Grande.', freeDelivery: true },
+            { id: 'cb15', name: 'SUPER COMBO CACHORRO DUPLO', price: 68.00, desc: '2 Cachorros Duplos, 1 Coca-Cola 2L e 1 Batata Grande.', freeDelivery: true }
         ];
 
         const dbAdicionais = [
@@ -532,6 +532,7 @@
 
             let borderClass = type === 'combo' ? 'border-black border-2 shadow-md' : 'border-gray-100 border shadow-sm hover:shadow-md';
             let comboRibbon = type === 'combo' ? `<div class="absolute -right-8 top-5 bg-orange-600 text-white text-[10px] font-black px-10 py-1 shadow-sm rotate-45 uppercase tracking-wider">Combo</div>` : '';
+            let freeDeliveryTag = item.freeDelivery ? `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1">🚚 Entrega Grátis</span>` : '';
 
             return `
             <div class="bg-white p-5 rounded-2xl ${borderClass} flex flex-col justify-between transition cursor-pointer relative overflow-hidden" onclick='openProductModal(${JSON.stringify(item)}, "${type}")'>
@@ -539,6 +540,7 @@
                 <div class="pr-4">
                     <h3 class="font-black text-gray-800 text-lg uppercase">${item.name}</h3>
                     <p class="text-xs text-gray-500 mt-2 line-clamp-3 leading-relaxed">${item.desc}</p>
+                    ${freeDeliveryTag}
                 </div>
                 <div class="flex justify-between items-end mt-4">
                     <p class="font-black ${priceColor} text-lg">${formatMoney(item.price)}</p>
@@ -750,9 +752,14 @@
             }
         }
 
+        function hasFreeDelivery() {
+            return cart.some(item => item.product.freeDelivery || ['cb13', 'cb14', 'cb15'].includes(item.product.id));
+        }
+
         function updateCartUI() {
             const subtotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-            const total = cart.length > 0 ? subtotal + DELIVERY_FEE : 0;
+            const fee = cart.length > 0 ? (hasFreeDelivery() ? 0 : DELIVERY_FEE) : 0;
+            const total = cart.length > 0 ? subtotal + fee : 0;
             document.getElementById('cart-total').innerText = formatMoney(total);
             document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
         }
@@ -799,6 +806,11 @@
             });
 
             const total = subtotal + DELIVERY_FEE;
+            const isFree = hasFreeDelivery();
+            const fee = isFree ? 0 : DELIVERY_FEE;
+            const totalCalc = subtotal + fee;
+            const feeText = isFree ? '<span class="text-green-600 font-bold">Grátis (Entrega Inclusa)</span>' : formatMoney(DELIVERY_FEE);
+
             cartItemsDiv.innerHTML += `
                 <div class="pt-3 border-t text-xs sm:text-sm space-y-1.5">
                     <div class="flex justify-between text-gray-600 font-medium">
@@ -807,11 +819,11 @@
                     </div>
                     <div class="flex justify-between text-gray-600 font-medium">
                         <span>Taxa de Entrega:</span>
-                        <span>${formatMoney(DELIVERY_FEE)}</span>
+                        <span>${feeText}</span>
                     </div>
                     <div class="flex justify-between font-black text-gray-900 text-sm sm:text-base pt-2 border-t border-dashed border-gray-300">
                         <span>Total do Pedido:</span>
-                        <span class="text-orange-600">${formatMoney(total)}</span>
+                        <span class="text-orange-600">${formatMoney(totalCalc)}</span>
                     </div>
                 </div>
             `;
@@ -874,11 +886,14 @@
                 text += `\n`; // Espaço entre os lanches
             });
             
-            const totalOrderPrice = subtotal + DELIVERY_FEE;
+            const isFree = hasFreeDelivery();
+            const fee = isFree ? 0 : DELIVERY_FEE;
+            const totalOrderPrice = subtotal + fee;
+            const feeTextWhatsApp = isFree ? 'Grátis' : formatMoney(DELIVERY_FEE);
 
             text += `--------------------------------\n`;
             text += `*SUBTOTAL:* ${formatMoney(subtotal)}\n`;
-            text += `*TAXA DE ENTREGA:* ${formatMoney(DELIVERY_FEE)}\n`;
+            text += `*TAXA DE ENTREGA:* ${feeTextWhatsApp}\n`;
             text += `*TOTAL A PAGAR:* ${formatMoney(totalOrderPrice)}\n`;
             text += `*PAGAMENTO:* ${payment.toUpperCase()}\n`;
             
@@ -896,7 +911,7 @@
             if (payment === 'PIX') {
                 text += `📱 *CHAVE PIX (Celular):* 15991434775\n`;
                 text += `👤 *TITULAR:* TOP LANCHES ACAI\n\n`;
-                text += `😊 *Olá! Após realizar o Pix, envie o comprovante por aqui, por gentileza.*`;
+                text += `😊 * Olá! Após realizar o Pix, envie o comprovante por aqui, por gentileza.`;
             } else {
                 text += `ℹ️ *Pagamento na entrega do pedido.*`;
             }
