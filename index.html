@@ -131,6 +131,16 @@
                     </div>
                 </div>
 
+                <!-- Seletor de Opções (ex: Normal / Zero) -->
+                <div id="options-container" class="mb-4 sm:mb-6 hidden">
+                    <div class="bg-gray-100 p-2 rounded mb-3">
+                        <h3 class="text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wide">Escolha a Opção</h3>
+                    </div>
+                    <div id="options-list" class="flex gap-3">
+                        <!-- Opções (Normal / Zero) injetadas via JS -->
+                    </div>
+                </div>
+
                 <div id="adicionais-container" class="mb-4 sm:mb-6">
                     <div class="flex justify-between items-center bg-gray-100 p-2 rounded mb-3">
                         <h3 id="modal-adicionais-title" class="text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wide">Turbine seu lanche</h3>
@@ -214,13 +224,14 @@
 
     <script>
         // Configurações
-        const WHATSAPP_NUMBER = "5515997025374"; // O número do flyer
+        const WHATSAPP_NUMBER = "5515991434775"; // O número do flyer
         let cart = [];
         
         // Estado temporário do modal de produto
         let currentProduct = null;
         let currentProductType = null;
         let currentProductQty = 1;
+        let currentProductOption = null;
         let currentAdicionais = {};
         let currentAcaiSelectedCount = 0;
 
@@ -331,7 +342,7 @@
         ];
 
         const dbBebidas = [
-            { id: 'b1', name: 'Refrigerante Lata', price: 7.00, desc: 'Lata 350ml' },
+            { id: 'b1', name: 'COCA-COLA 350ML', price: 7.00, desc: 'Lata 350ml (Escolha Normal ou Zero)', options: ['Normal', 'Zero'] },
             { id: 'b2', name: 'Coca Cola 2 litros', price: 16.00, desc: 'Garrafa 2L' },
             { id: 'b3', name: 'Refrigerante Guaraná Kuat', price: 11.00, desc: 'Garrafa 2L' },
             { id: 'b4', name: 'Suco Del Valle 1,500ml', price: 9.00, desc: 'Garrafa 1.5L' }
@@ -411,6 +422,7 @@
             currentProduct = item;
             currentProductType = type;
             currentProductQty = 1;
+            currentProductOption = item.options ? item.options[0] : null;
             currentAdicionais = {}; // Limpa adicionais
             currentAcaiSelectedCount = 0;
 
@@ -418,6 +430,15 @@
             document.getElementById('modal-p-desc').innerText = item.desc;
             document.getElementById('modal-p-price').innerText = formatMoney(item.price);
             document.getElementById('modal-p-qty').innerText = currentProductQty;
+
+            // Gerencia exibição de opções do produto (Normal / Zero)
+            const optionsContainer = document.getElementById('options-container');
+            if (item.options && item.options.length > 0) {
+                optionsContainer.classList.remove('hidden');
+                renderProductOptions();
+            } else {
+                optionsContainer.classList.add('hidden');
+            }
 
             const addonsContainer = document.getElementById('adicionais-container');
             const addonsList = document.getElementById('adicionais-list');
@@ -478,6 +499,21 @@
 
         function closeProductModal() {
             document.getElementById('product-modal').classList.remove('active');
+        }
+
+        function renderProductOptions() {
+            if (!currentProduct || !currentProduct.options) return;
+            const optionsList = document.getElementById('options-list');
+            optionsList.innerHTML = currentProduct.options.map(opt => `
+                <button type="button" onclick="selectProductOption('${opt}')" class="flex-1 py-2.5 px-4 rounded-xl border-2 font-bold text-sm transition ${opt === currentProductOption ? 'border-orange-600 bg-orange-50 text-orange-600 shadow-sm' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'}">
+                    ${opt}
+                </button>
+            `).join('');
+        }
+
+        function selectProductOption(opt) {
+            currentProductOption = opt;
+            renderProductOptions();
         }
 
         function changeModalQty(delta) {
@@ -560,6 +596,7 @@
                 product: currentProduct,
                 qty: currentProductQty,
                 extras: extrasSelected,
+                selectedOption: currentProductOption,
                 totalPrice: itemTotalPrice
             });
 
@@ -607,6 +644,7 @@
             
             cart.forEach((cartItem, index) => {
                 let extrasHTML = '';
+                const optionLabel = cartItem.selectedOption ? ` <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold ml-1">${cartItem.selectedOption}</span>` : '';
                 if(cartItem.extras.length > 0) {
                     extrasHTML = `<ul class="text-xs text-gray-500 mt-1 pl-4 list-disc">`;
                     cartItem.extras.forEach(ext => {
@@ -618,7 +656,7 @@
                 cartItemsDiv.innerHTML += `
                     <div class="flex justify-between items-start border-b pb-3">
                         <div class="flex-1">
-                            <p class="font-bold text-gray-800">${cartItem.qty}x ${cartItem.product.name}</p>
+                            <p class="font-bold text-gray-800">${cartItem.qty}x ${cartItem.product.name}${optionLabel}</p>
                             ${extrasHTML}
                             <p class="text-sm font-bold text-orange-600 mt-1">${formatMoney(cartItem.totalPrice)}</p>
                         </div>
@@ -670,8 +708,9 @@
 
             cart.forEach(item => {
                 totalOrderPrice += item.totalPrice;
+                const optionText = item.selectedOption ? ` (${item.selectedOption.toUpperCase()})` : '';
                 // Item principal
-                text += `-> ${item.qty}x ${item.product.name.toUpperCase()} (R$ ${(item.product.price * item.qty).toFixed(2).replace('.',',')})\n`;
+                text += `-> ${item.qty}x ${item.product.name.toUpperCase()}${optionText} (R$ ${(item.product.price * item.qty).toFixed(2).replace('.',',')})\n`;
                 
                 // Adicionais com identação (espaços no começo) para impressora
                 if (item.extras.length > 0) {
@@ -697,17 +736,20 @@
                 }
             }
             text += `--------------------------------\n`;
-            text += `Aguardamos a confirmação. Obrigado!`;
+            
+            // MENSAGEM CONDICIONAL DE PAGAMENTO
+            if (payment === 'PIX') {
+                text += `📱 *CHAVE PIX (Celular):* 15991434775\n`;
+                text += `👤 *TITULAR:* TOP LANCHES ACAI\n\n`;
+                text += `⚠️ *Por favor, envie o comprovante do PIX após esta mensagem.*`;
+            } else {
+                text += `ℹ️ *Pagamento na entrega do pedido.*`;
+            }
 
             const encodedText = encodeURIComponent(text);
             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedText}`;
             
             window.open(whatsappUrl, '_blank');
-            
-            // Opcional: Limpar após o envio
-            // closeCheckout();
-            // cart = [];
-            // updateCartUI();
         }
 
         // Inicializa o menu ao carregar a página
