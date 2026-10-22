@@ -690,10 +690,8 @@
                 return;
             }
 
-            // Salva os dados de forma segura e persistente para a próxima visita
-            if (window.saveUserDataToCloud) {
-                window.saveUserDataToCloud(name, address, number, neighborhood);
-            }
+            // Salva os dados localmente no navegador e na nuvem para a próxima visita
+            saveCustomerInfo(name, address, number, neighborhood);
 
             // OTIMIZADO PARA IMPRESSORA TÉRMICA
             let text = `*PEDIDO - TOP LANCHES E AÇAÍ*\n`;
@@ -752,12 +750,60 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // Inicializa o menu ao carregar a página
-        window.onload = initMenu;
+        // Funções para salvar e carregar dados do cliente no LocalStorage nativo do celular
+        function loadCustomerInfo() {
+            try {
+                const saved = localStorage.getItem('toplanches_customer_info');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if(data.name) document.getElementById('c-name').value = data.name;
+                    if(data.address) document.getElementById('c-address').value = data.address;
+                    if(data.number) document.getElementById('c-number').value = data.number;
+                    if(data.neighborhood) document.getElementById('c-neighborhood').value = data.neighborhood;
+                }
+            } catch (e) {
+                console.warn("Erro ao carregar do LocalStorage:", e);
+            }
+        }
+
+        function saveCustomerInfo(name, address, number, neighborhood) {
+            try {
+                localStorage.setItem('toplanches_customer_info', JSON.stringify({ name, address, number, neighborhood }));
+            } catch (e) {
+                console.warn("Erro ao salvar no LocalStorage:", e);
+            }
+            if (window.saveUserDataToCloud) {
+                window.saveUserDataToCloud(name, address, number, neighborhood);
+            }
+        }
+
+        function setupAutoSave() {
+            ['c-name', 'c-address', 'c-number', 'c-neighborhood'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', () => {
+                        const name = document.getElementById('c-name').value;
+                        const address = document.getElementById('c-address').value;
+                        const number = document.getElementById('c-number').value;
+                        const neighborhood = document.getElementById('c-neighborhood').value;
+                        try {
+                            localStorage.setItem('toplanches_customer_info', JSON.stringify({ name, address, number, neighborhood }));
+                        } catch (e) {}
+                    });
+                }
+            });
+        }
+
+        // Inicializa o menu e carrega dados salvos ao carregar a página
+        window.onload = function() {
+            initMenu();
+            loadCustomerInfo();
+            setupAutoSave();
+        };
 
     </script>
 
-    <!-- Sistema de Salvamento Seguro (Mais persistente que o LocalStorage) -->
+    <!-- Sistema de Salvamento Seguro (Nuvem + Fallback) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -775,7 +821,6 @@
 
             const initAuth = async () => {
                 try {
-                    // Autenticação silenciosa para o cliente
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
@@ -784,7 +829,7 @@
                     userId = auth.currentUser?.uid;
                     loadUserData();
                 } catch (error) {
-                    console.error("Erro no sistema de login automático:", error);
+                    console.error("Erro no login silencioso:", error);
                 }
             };
 
@@ -794,16 +839,15 @@
                     const docRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'delivery_info');
                     const docSnap = await getDoc(docRef);
                     
-                    // Se o cliente já comprou antes, preenche os dados automaticamente
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        if(data.name) document.getElementById('c-name').value = data.name;
-                        if(data.address) document.getElementById('c-address').value = data.address;
-                        if(data.number) document.getElementById('c-number').value = data.number;
-                        if(data.neighborhood) document.getElementById('c-neighborhood').value = data.neighborhood;
+                        if(data.name && !document.getElementById('c-name').value) document.getElementById('c-name').value = data.name;
+                        if(data.address && !document.getElementById('c-address').value) document.getElementById('c-address').value = data.address;
+                        if(data.number && !document.getElementById('c-number').value) document.getElementById('c-number').value = data.number;
+                        if(data.neighborhood && !document.getElementById('c-neighborhood').value) document.getElementById('c-neighborhood').value = data.neighborhood;
                     }
                 } catch (e) {
-                    console.error("Erro ao carregar endereço:", e);
+                    console.error("Erro ao carregar da nuvem:", e);
                 }
             };
 
@@ -811,16 +855,14 @@
                 if (!userId || !db) return;
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'delivery_info');
-                    // Salva as informações após ele enviar o pedido
                     await setDoc(docRef, { name, address, number, neighborhood }, { merge: true });
                 } catch (e) {
-                    console.error("Erro ao salvar dados de entrega:", e);
+                    console.error("Erro ao salvar na nuvem:", e);
                 }
             };
 
             initAuth();
         } else {
-            // Fallback silencioso caso a configuração de nuvem não esteja ativa
             window.saveUserDataToCloud = async () => {}; 
         }
     </script>
