@@ -31,6 +31,7 @@
         <a href="#sec-lanches" class="px-4 py-2 bg-orange-100 text-orange-700 font-bold rounded-full text-sm hover:bg-orange-200 transition">🍔 Hambúrguer</a>
         <a href="#sec-hotdog" class="px-4 py-2 bg-yellow-100 text-yellow-700 font-bold rounded-full text-sm hover:bg-yellow-200 transition">🌭 Cachorro-quente</a>
         <a href="#sec-batatas" class="px-4 py-2 bg-amber-100 text-amber-700 font-bold rounded-full text-sm hover:bg-amber-200 transition">🍟 Batatas</a>
+        <a href="#sec-combos" class="px-4 py-2 bg-black text-orange-500 font-bold rounded-full text-sm hover:bg-gray-800 transition shadow-sm">⭐ Combos</a>
         <a href="#sec-acai" class="px-4 py-2 bg-purple-100 text-purple-700 font-bold rounded-full text-sm hover:bg-purple-200 transition">💜 Açaí</a>
         <a href="#sec-bebidas" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">🥤 Bebidas</a>
     </nav>
@@ -52,6 +53,18 @@
         <!-- Categoria: Batatas -->
         <h2 id="sec-batatas" class="scroll-mt-24 text-2xl font-black text-gray-900 mb-4 border-b-2 border-amber-500 pb-1 uppercase mt-8">Cardápio Batatas</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="menu-batatas">
+            <!-- Os itens serão gerados via JS -->
+        </div>
+
+        <!-- Categoria: Combos -->
+        <h2 id="sec-combos" class="scroll-mt-24 text-2xl font-black text-gray-900 mb-2 border-b-2 border-black pb-1 uppercase mt-8 flex items-center gap-2">
+            Cardápio Combos
+            <span class="bg-black text-orange-500 text-[10px] sm:text-xs px-2 py-1 rounded-full uppercase tracking-widest">Ofertas</span>
+        </h2>
+        <p class="text-xs sm:text-sm font-medium text-orange-800 mb-4 bg-orange-100 p-3 rounded-lg border border-orange-200">
+            ⚠️ <strong>Aviso:</strong> Os açaís inclusos em todos os combos já acompanham Leite Condensado e Leite em Pó.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="menu-combos">
             <!-- Os itens serão gerados via JS -->
         </div>
 
@@ -242,6 +255,21 @@
             { id: 'bt9', name: 'BATATA CHEDDAR, BACON E REQUEIJÃO - GG', price: 54.00, desc: 'Porção GG' }
         ];
 
+        const dbCombos = [
+            { id: 'cb1', name: 'COMBO X-BACON INDIVIDUAL', price: 42.00, desc: '1 X-Bacon, 1 Coca lata e 1 Açaí 200ml.' },
+            { id: 'cb2', name: 'COMBO X-BACON CASAL', price: 86.00, desc: '2 X-Bacon, 1 Coca 2 litros e 2 Açaís 200ml.' },
+            { id: 'cb3', name: 'COMBO X-BACON FAMÍLIA 1', price: 121.00, desc: '3 X-Bacon, 1 Coca 2 litros e 3 Açaís 200ml.' },
+            { id: 'cb4', name: 'COMBO X-BACON FAMÍLIA 2', price: 160.00, desc: '4 X-Bacon, 1 Coca 2 litros e 4 Açaís 200ml.' },
+            { id: 'cb5', name: 'COMBO X-SALADA INDIVIDUAL', price: 38.00, desc: '1 X-Salada, 1 Coca lata e 1 Açaí 200ml.' },
+            { id: 'cb6', name: 'COMBO X-SALADA CASAL', price: 80.00, desc: '2 X-Salada, 1 Coca 2 litros e 2 Açaís 200ml.' },
+            { id: 'cb7', name: 'COMBO X-SALADA FAMÍLIA 1', price: 112.00, desc: '3 X-Salada, 1 Coca 2 litros e 3 Açaís 200ml.' },
+            { id: 'cb8', name: 'COMBO X-SALADA FAMÍLIA 2', price: 143.00, desc: '4 X-Salada, 1 Coca 2 litros e 4 Açaís 200ml.' },
+            { id: 'cb9', name: 'COMBO C. QUENTE INDIVIDUAL', price: 34.00, desc: '1 Cachorro-quente, 1 Coca lata e 1 Açaí 200ml.' },
+            { id: 'cb10', name: 'COMBO C. QUENTE CASAL', price: 70.00, desc: '2 Cachorros-quentes, 1 Coca 2 litros e 2 Açaís 200ml.' },
+            { id: 'cb11', name: 'COMBO C. QUENTE FAMÍLIA 1', price: 100.00, desc: '3 Cachorros-quentes, 1 Coca 2 litros e 3 Açaís 200ml.' },
+            { id: 'cb12', name: 'COMBO C. QUENTE FAMÍLIA 2', price: 130.00, desc: '4 Cachorros-quentes, 1 Coca 2 litros e 4 Açaís 200ml.' }
+        ];
+
         const dbAdicionais = [
             { id: 'a1', name: 'Hambúrguer', price: 9.00 },
             { id: 'a2', name: 'Bacon', price: 6.00 },
@@ -303,6 +331,11 @@
                 containerBatatas.innerHTML += createProductCard(item, 'batata');
             });
 
+            const containerCombos = document.getElementById('menu-combos');
+            dbCombos.forEach(item => {
+                containerCombos.innerHTML += createProductCard(item, 'combo');
+            });
+
             const containerAcai = document.getElementById('menu-acai');
             dbAcai.forEach(item => {
                 containerAcai.innerHTML += createProductCard(item, 'acai');
@@ -316,16 +349,22 @@
 
         function createProductCard(item, type) {
             let badgeColor = type === 'acai' ? 'bg-purple-100 text-purple-700' : 
+                             (type === 'combo' ? 'bg-black text-orange-500' :
                              (type === 'hotdog' ? 'bg-yellow-100 text-yellow-700' : 
-                             (type === 'batata' ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-600'));
+                             (type === 'batata' ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-600')));
             
             let priceColor = type === 'acai' ? 'text-purple-700' : 
+                             (type === 'combo' ? 'text-gray-900 font-black' :
                              (type === 'hotdog' ? 'text-yellow-700' : 
-                             (type === 'batata' ? 'text-amber-700' : 'text-orange-600'));
+                             (type === 'batata' ? 'text-amber-700' : 'text-orange-600')));
+
+            let borderClass = type === 'combo' ? 'border-black border-2 shadow-md' : 'border-gray-100 border shadow-sm hover:shadow-md';
+            let comboRibbon = type === 'combo' ? `<div class="absolute -right-8 top-5 bg-orange-600 text-white text-[10px] font-black px-10 py-1 shadow-sm rotate-45 uppercase tracking-wider">Combo</div>` : '';
 
             return `
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition cursor-pointer" onclick='openProductModal(${JSON.stringify(item)}, "${type}")'>
-                <div>
+            <div class="bg-white p-5 rounded-2xl ${borderClass} flex flex-col justify-between transition cursor-pointer relative overflow-hidden" onclick='openProductModal(${JSON.stringify(item)}, "${type}")'>
+                ${comboRibbon}
+                <div class="pr-4">
                     <h3 class="font-black text-gray-800 text-lg uppercase">${item.name}</h3>
                     <p class="text-xs text-gray-500 mt-2 line-clamp-3 leading-relaxed">${item.desc}</p>
                 </div>
