@@ -168,7 +168,7 @@
 
     <script>
         // Configurações
-        const WHATSAPP_NUMBER = "5515997025374"; // O número do flyer
+        const WHATSAPP_NUMBER = "5515991434775"; // O número do flyer
         let cart = [];
         
         // Estado temporário do modal de produto
@@ -180,6 +180,18 @@
 
         // Banco de Dados de Produtos (Baseado na Imagem)
         const dbLanches = [
+            { id: 'h1', name: 'X-BURGUER', price: 20.00, desc: 'Pão, hambúrguer artesanal, mussarela, maionese e catupiry.' },
+            { id: 'h2', name: 'DUPLO X BURGUER', price: 28.00, desc: 'Pão, 2 hambúrgueres artesanais, mussarela, maionese e catupiry.' },
+            { id: 'h3', name: 'X-MILHO', price: 22.00, desc: 'Pão, hambúrguer artesanal, mussarela, milho, tomate, maionese e catupiry.' },
+            { id: 'h4', name: 'X-EGG', price: 22.00, desc: 'Pão, hambúrguer artesanal, mussarela, tomate, ovo, maionese e catupiry.' },
+            { id: 'h5', name: 'X-SALADA', price: 24.00, desc: 'Pão, hambúrguer artesanal, mussarela, alface, tomate, maionese e catupiry.' },
+            { id: 'h6', name: 'X FRANGO', price: 27.00, desc: 'Pão, hambúrguer artesanal, frango, mussarela, tomate, maionese e catupiry.' },
+            { id: 'h7', name: 'X-CALABRESA', price: 28.00, desc: 'Pão, hambúrguer artesanal, mussarela, calabresa, tomate, maionese e catupiry.' },
+            { id: 'h8', name: 'X-BACON', price: 28.00, desc: 'Pão, hambúrguer artesanal, mussarela, bacon, tomate, maionese e catupiry.' },
+            { id: 'h9', name: 'X SALADA BACON', price: 30.00, desc: 'Pão, hambúrguer artesanal, bacon, alface, mussarela, tomate, maionese e catupiry.' },
+            { id: 'h10', name: 'CALABACON', price: 32.00, desc: 'Pão, hambúrguer artesanal, mussarela, calabresa, bacon, tomate, maionese e catupiry.' },
+            { id: 'h11', name: 'BACON CHEDDAR', price: 32.00, desc: 'Pão, hambúrguer artesanal, mussarela, bacon, cheddar, tomate, maionese e catupiry.' },
+            { id: 'h12', name: 'FRANGO 3 QUEIJOS', price: 34.00, desc: 'Pão, hambúrguer artesanal, frango, mussarela, cheddar, tomate, maionese e catupiry.' },
             { id: 'l1', name: 'CALAFRANGO', price: 34.00, desc: 'Pão, hambúrguer artesanal, calabresa, mussarela, frango, tomate, maionese e catupiry.' },
             { id: 'l2', name: 'FRANBACON', price: 34.00, desc: 'Pão, hambúrguer artesanal, frango, bacon, mussarela, tomate, maionese e catupiry.' },
             { id: 'l3', name: 'TOP BACON', price: 36.00, desc: 'Pão, hambúrguer artesanal, bacon, 100 gramas de catupiry, mussarela, tomate e maionese.' },
@@ -516,6 +528,11 @@
                 return;
             }
 
+            // Salva os dados de forma segura e persistente para a próxima visita
+            if (window.saveUserDataToCloud) {
+                window.saveUserDataToCloud(name, address, number, neighborhood);
+            }
+
             // OTIMIZADO PARA IMPRESSORA TÉRMICA
             let text = `*PEDIDO - TOP LANCHES E AÇAÍ*\n`;
             text += `--------------------------------\n`;
@@ -572,6 +589,74 @@
         // Inicializa o menu ao carregar a página
         window.onload = initMenu;
 
+    </script>
+
+    <!-- Sistema de Salvamento Seguro (Mais persistente que o LocalStorage) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        
+        let db, auth, userId;
+
+        if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            const initAuth = async () => {
+                try {
+                    // Autenticação silenciosa para o cliente
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    userId = auth.currentUser?.uid;
+                    loadUserData();
+                } catch (error) {
+                    console.error("Erro no sistema de login automático:", error);
+                }
+            };
+
+            const loadUserData = async () => {
+                if (!userId) return;
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'delivery_info');
+                    const docSnap = await getDoc(docRef);
+                    
+                    // Se o cliente já comprou antes, preenche os dados automaticamente
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if(data.name) document.getElementById('c-name').value = data.name;
+                        if(data.address) document.getElementById('c-address').value = data.address;
+                        if(data.number) document.getElementById('c-number').value = data.number;
+                        if(data.neighborhood) document.getElementById('c-neighborhood').value = data.neighborhood;
+                    }
+                } catch (e) {
+                    console.error("Erro ao carregar endereço:", e);
+                }
+            };
+
+            window.saveUserDataToCloud = async (name, address, number, neighborhood) => {
+                if (!userId || !db) return;
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'delivery_info');
+                    // Salva as informações após ele enviar o pedido
+                    await setDoc(docRef, { name, address, number, neighborhood }, { merge: true });
+                } catch (e) {
+                    console.error("Erro ao salvar dados de entrega:", e);
+                }
+            };
+
+            initAuth();
+        } else {
+            // Fallback silencioso caso a configuração de nuvem não esteja ativa
+            window.saveUserDataToCloud = async () => {}; 
+        }
     </script>
 </body>
 </html>
