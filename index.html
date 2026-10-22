@@ -390,7 +390,24 @@
                 }
             }
 
-            const itemTotalPrice = (currentProduct.price + totalExtrasCost) * currentProductQty;
+            const itemTotalPrice = (currentProduct.price + totalAdicionais) * currentProductQty;
+            document.getElementById('modal-p-total').innerText = formatMoney(itemTotalPrice);
+        }
+
+        function confirmAddToCart() {
+            let totalAdicionais = 0;
+            let extrasSelected = [];
+            
+            for (let key in currentAdicionais) {
+                if (currentAdicionais[key].qty > 0) {
+                    if (!currentAdicionais[key].isFree) {
+                        totalAdicionais += currentAdicionais[key].price * currentAdicionais[key].qty;
+                    }
+                    extrasSelected.push(currentAdicionais[key]);
+                }
+            }
+
+            const itemTotalPrice = (currentProduct.price + totalAdicionais) * currentProductQty;
 
             cart.push({
                 product: currentProduct,
