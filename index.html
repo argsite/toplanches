@@ -38,6 +38,7 @@
 
     <!-- Menu Superior Deslizante (Sticky) -->
     <nav class="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-200 overflow-x-auto whitespace-nowrap py-3 px-4 flex gap-3 hide-scrollbar items-center">
+        <a href="#sec-destaques" class="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 text-white font-black rounded-full text-sm shadow-sm hover:opacity-90 transition">🔥 Mais Pedidos</a>
         <a href="#sec-lanches" class="px-4 py-2 bg-orange-100 text-orange-700 font-bold rounded-full text-sm hover:bg-orange-200 transition">🍔 Hambúrguer</a>
         <a href="#sec-hotdog" class="px-4 py-2 bg-yellow-100 text-yellow-700 font-bold rounded-full text-sm hover:bg-yellow-200 transition">🌭 Cachorro-quente</a>
         <a href="#sec-batatas" class="px-4 py-2 bg-amber-100 text-amber-700 font-bold rounded-full text-sm hover:bg-amber-200 transition">🍟 Batatas</a>
@@ -48,6 +49,21 @@
 
     <main class="max-w-3xl mx-auto mt-6 px-4">
         
+        <!-- Seção: Mais Pedidos (Carrossel Touchscreen) -->
+        <div id="sec-destaques" class="scroll-mt-24 mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-xl sm:text-2xl font-black text-gray-900 uppercase tracking-tight flex items-center gap-2">
+                    🔥 Mais Pedidos
+                </h2>
+                <span class="text-xs text-orange-600 font-bold animate-pulse">Deslize ➔</span>
+            </div>
+            
+            <!-- Carrossel Deslizante -->
+            <div class="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar -mx-4 px-4 pb-2" id="carousel-mais-pedidos">
+                <!-- Os cards do carrossel serão injetados via JavaScript -->
+            </div>
+        </div>
+
         <!-- Categoria: Hambúrguer -->
         <h2 id="sec-lanches" class="scroll-mt-24 text-2xl font-black text-gray-900 mb-4 border-b-2 border-orange-500 pb-1 uppercase">Cardápio Hambúrguer</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="menu-lanches">
@@ -226,6 +242,39 @@
         const WHATSAPP_NUMBER = "5515991434775"; // O número do flyer
         const DELIVERY_FEE = 8.00; // Taxa de entrega fixa
         let cart = [];
+
+        // BANCO DE DADOS: MAIS PEDIDOS (CARROSSEL)
+        // Você pode adicionar mais fotos e itens aqui conforme desejar!
+        const dbMaisPedidos = [
+            {
+                id: 'l6', // ID do item no banco (ex: l6 = DUPLO BACON CHEDDAR)
+                type: 'lanche',
+                tag: '🔥 O Campeão',
+                image: 'duplo_bacon_cheddar.jpg', // INSIRA A URL OU CAMINHO DA FOTO DO LANCHE AQUI
+                fallbackText: 'Duplo Bacon Cheddar'
+            },
+            {
+                id: 'ac3', // Açaí 1 Litro
+                type: 'acai',
+                tag: '💜 Queridinho',
+                image: 'acai_1litro.jpeg',
+                fallbackText: 'Açaí 1 Litro'
+            },
+            {
+                id: 'l8', // Cachorro-quente Duplo
+                type: 'hotdog',
+                tag: '🌭 O Monstro',
+                image: 'cachorro-duplo.jpeg',
+                fallbackText: 'Cachorro-quente Duplo'
+            },
+            {
+                id: 'cb14', // Super Combo X-Bacon
+                type: 'batata',
+                tag: '🍟 Top',
+                image: 'batata_bacon.jpeg',
+                fallbackText: 'Batata Bacon Cheddar'
+            }
+        ];
         
         // Estado temporário do modal de produto
         let currentProduct = null;
@@ -352,40 +401,122 @@
         const formatMoney = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`;
 
         function initMenu() {
+            // Renderiza o Carrossel dos Mais Pedidos
+            renderMaisPedidos();
+
             const containerLanches = document.getElementById('menu-lanches');
-            dbLanches.forEach(item => {
-                containerLanches.innerHTML += createProductCard(item, 'lanche');
-            });
+            if (containerLanches) {
+                containerLanches.innerHTML = '';
+                dbLanches.forEach(item => {
+                    containerLanches.innerHTML += createProductCard(item, 'lanche');
+                });
+            }
 
             const containerHotdog = document.getElementById('menu-hotdog');
-            dbHotdog.forEach(item => {
-                containerHotdog.innerHTML += createProductCard(item, 'hotdog');
-            });
+            if (containerHotdog) {
+                containerHotdog.innerHTML = '';
+                dbHotdog.forEach(item => {
+                    containerHotdog.innerHTML += createProductCard(item, 'hotdog');
+                });
+            }
 
             const containerBatatas = document.getElementById('menu-batatas');
-            dbBatatas.forEach(item => {
-                containerBatatas.innerHTML += createProductCard(item, 'batata');
-            });
+            if (containerBatatas) {
+                containerBatatas.innerHTML = '';
+                dbBatatas.forEach(item => {
+                    containerBatatas.innerHTML += createProductCard(item, 'batata');
+                });
+            }
 
             const containerCombosAcai = document.getElementById('menu-combos-acai');
-            dbCombosAcai.forEach(item => {
-                containerCombosAcai.innerHTML += createProductCard(item, 'combo');
-            });
+            if (containerCombosAcai) {
+                containerCombosAcai.innerHTML = '';
+                dbCombosAcai.forEach(item => {
+                    containerCombosAcai.innerHTML += createProductCard(item, 'combo');
+                });
+            }
 
             const containerCombosBatata = document.getElementById('menu-combos-batata');
-            dbCombosBatata.forEach(item => {
-                containerCombosBatata.innerHTML += createProductCard(item, 'combo');
-            });
+            if (containerCombosBatata) {
+                containerCombosBatata.innerHTML = '';
+                dbCombosBatata.forEach(item => {
+                    containerCombosBatata.innerHTML += createProductCard(item, 'combo');
+                });
+            }
 
             const containerAcai = document.getElementById('menu-acai');
-            dbAcai.forEach(item => {
-                containerAcai.innerHTML += createProductCard(item, 'acai');
-            });
+            if (containerAcai) {
+                containerAcai.innerHTML = '';
+                dbAcai.forEach(item => {
+                    containerAcai.innerHTML += createProductCard(item, 'acai');
+                });
+            }
 
             const containerBebidas = document.getElementById('menu-bebidas');
-            dbBebidas.forEach(item => {
-                containerBebidas.innerHTML += createProductCard(item, 'bebida');
+            if (containerBebidas) {
+                containerBebidas.innerHTML = '';
+                dbBebidas.forEach(item => {
+                    containerBebidas.innerHTML += createProductCard(item, 'bebida');
+                });
+            }
+        }
+
+        function renderMaisPedidos() {
+            const carouselContainer = document.getElementById('carousel-mais-pedidos');
+            carouselContainer.innerHTML = '';
+
+            dbMaisPedidos.forEach(itemConfig => {
+                // Busca as informações do produto nos bancos de dados existentes
+                const product = findProductById(itemConfig.id, itemConfig.type);
+                if (!product) return;
+
+                const fallbackUrl = `https://placehold.co/400x400/18181b/ffffff?text=${encodeURIComponent(product.name)}`;
+                const imageSrc = itemConfig.image || fallbackUrl;
+
+                carouselContainer.innerHTML += `
+                    <div class="snap-start shrink-0 w-44 sm:w-52 h-44 sm:h-52 relative rounded-2xl overflow-hidden shadow-md group cursor-pointer border border-gray-200 active:scale-95 transition-transform" 
+                         onclick="openMaisPedido('${product.id}', '${itemConfig.type}')">
+                        
+                        <!-- Imagem do Produto Quadrada -->
+                        <img src="${imageSrc}" 
+                             onerror="this.onerror=null; this.src='${fallbackUrl}';" 
+                             alt="${product.name}" 
+                             class="w-full h-full object-cover">
+                        
+                        <!-- Tag/Selo Superior (Ex: 🔥 O Campeão) -->
+                        <div class="absolute top-2 left-2 bg-orange-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md uppercase tracking-wider">
+                            ${itemConfig.tag}
+                        </div>
+
+                        <!-- Gradiente Escuro na Base para leitura perfeita da legenda -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-3">
+                            <h3 class="text-white font-black text-sm sm:text-base uppercase leading-snug drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] line-clamp-2">
+                                ${product.name}
+                            </h3>
+                            <p class="text-orange-400 font-extrabold text-xs sm:text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] mt-0.5">
+                                ${formatMoney(product.price)}
+                            </p>
+                        </div>
+                    </div>
+                `;
             });
+        }
+
+        function findProductById(id, type) {
+            if (type === 'lanche') return dbLanches.find(p => p.id === id);
+            if (type === 'hotdog') return dbHotdog.find(p => p.id === id);
+            if (type === 'batata') return dbBatatas.find(p => p.id === id);
+            if (type === 'combo') return dbCombosAcai.find(p => p.id === id) || dbCombosBatata.find(p => p.id === id);
+            if (type === 'acai') return dbAcai.find(p => p.id === id);
+            if (type === 'bebida') return dbBebidas.find(p => p.id === id);
+            return null;
+        }
+
+        function openMaisPedido(id, type) {
+            const product = findProductById(id, type);
+            if (product) {
+                openProductModal(product, type);
+            }
         }
 
         function createProductCard(item, type) {
@@ -764,8 +895,8 @@
             
             if (payment === 'PIX') {
                 text += `📱 *CHAVE PIX (Celular):* 15991434775\n`;
-                text += `👤 *TITULAR:* RENATA GONÇALVES DE OLIVEIRA FERREIRA\n\n`;
-                text += `😊 *Olá! Após realizar o Pix, envie o comprovante por aqui, por gentileza.*`;
+                text += `👤 *TITULAR:* TOP LANCHES ACAI\n\n`;
+                text += `⚠️ *Por favor, envie o comprovante do PIX após esta mensagem.*`;
             } else {
                 text += `ℹ️ *Pagamento na entrega do pedido.*`;
             }
