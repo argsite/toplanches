@@ -23,17 +23,8 @@
 
     <!-- Cabeçalho do Delivery com Logo e Identidade Visual -->
     <header class="bg-orange-600 text-white p-4 sm:p-6 shadow-lg text-center border-b-4 border-black flex flex-col items-center justify-center relative">
-        <!-- Badge de Status da Loja -->
-        <div id="store-status-badge" class="absolute top-4 right-4 bg-gray-800 text-white text-[10px] sm:text-xs font-black px-3 py-1.5 rounded-full shadow-md flex items-center gap-2 border border-gray-700 transition-colors duration-300">
-            <span class="relative flex h-2 w-2">
-              <span id="store-status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-              <span id="store-status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
-            </span>
-            <span id="store-status-text">CARREGANDO...</span>
-        </div>
-
         <!-- Moldura com cantos arredondados otimizada para logo quadrada/retangular -->
-        <div class="relative mb-2">
+        <div class="relative mb-2 mt-2">
             <!-- INSIRA A URL OU CAMINHO DA SUA LOGO NO ATRIBUTO 'src' ABAIXO (Ex: logo_toplanches.jpg) -->
             <img id="header-logo" 
                  src="logo_toplanches.jpg" 
@@ -43,6 +34,15 @@
         </div>
         <h1 class="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-none">Top Lanches e Açaí</h1>
         <p class="text-xs sm:text-sm mt-1 text-orange-100 font-medium tracking-wide">Hamburgueria Artesanal - Delivery</p>
+        
+        <!-- Badge de Status da Loja (Reposicionado e Centralizado) -->
+        <div id="store-status-badge" class="mt-3 inline-flex bg-gray-800 text-white text-[10px] sm:text-xs font-black px-5 py-2 rounded-full shadow-md items-center justify-center gap-2 border border-gray-700 transition-colors duration-300">
+            <span class="relative flex h-2 w-2">
+              <span id="store-status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+              <span id="store-status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
+            </span>
+            <span id="store-status-text">CARREGANDO...</span>
+        </div>
     </header>
 
     <!-- Menu Superior Deslizante (Sticky) -->
@@ -179,7 +179,7 @@
                 <!-- Campo de Observações -->
                 <div class="mb-4 sm:mb-6">
                     <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Observações (Opcional)</label>
-                    <textarea id="modal-p-obs" rows="2" class="w-full border-gray-300 border rounded-lg p-2 sm:p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm bg-gray-50" placeholder="Ex: Tirar ingrediente, sem salada etc."></textarea>
+                    <textarea id="modal-p-obs" rows="2" class="w-full border-gray-300 border rounded-lg p-2 sm:p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm bg-gray-50" placeholder="Ex: Tirar ingrediente, remover salada etc."></textarea>
                 </div>
             </div>
 
@@ -318,13 +318,13 @@
             const text = document.getElementById('store-status-text');
 
             if (isOpen) {
-                badge.className = "absolute top-4 right-4 bg-white text-green-700 text-[10px] sm:text-xs font-black px-3 py-1.5 rounded-full shadow-md flex items-center gap-2 border border-green-200";
+                badge.className = "mt-3 inline-flex bg-white text-green-700 text-[10px] sm:text-xs font-black px-5 py-2 rounded-full shadow-md items-center justify-center gap-2 border border-green-200";
                 dot.className = "relative inline-flex rounded-full h-2 w-2 bg-green-500";
                 ping.className = "animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75";
                 ping.style.display = "block";
                 text.innerText = "ABERTO AGORA";
             } else {
-                badge.className = "absolute top-4 right-4 bg-red-600 text-white text-[10px] sm:text-xs font-black px-3 py-1.5 rounded-full shadow-md flex items-center gap-2 border border-red-700";
+                badge.className = "mt-3 inline-flex bg-red-600 text-white text-[10px] sm:text-xs font-black px-5 py-2 rounded-full shadow-md items-center justify-center gap-2 border border-red-700";
                 dot.className = "relative inline-flex rounded-full h-2 w-2 bg-white";
                 ping.style.display = "none";
                 
