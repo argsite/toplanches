@@ -91,7 +91,7 @@
         <!-- Subcategoria: Combos com Açaí -->
         <h3 class="text-lg sm:text-xl font-black text-orange-600 mt-4 mb-3 uppercase tracking-wide">Com Açaí</h3>
         <p class="text-xs sm:text-sm font-medium text-orange-800 mb-4 bg-orange-100 p-3 rounded-lg border border-orange-200">
-            ⚠️ <strong>Aviso:</strong> Os açaís inclusos nos combos acompanham Leite Condensado e Leite em Pó.
+            ⚠️ <strong>Aviso:</strong> Os açaís inclusos nos combos já acompanham Leite Condensado e Leite em Pó.
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6" id="menu-combos-acai">
             <!-- Os itens serão gerados via JS -->
@@ -165,6 +165,12 @@
                     <div id="adicionais-list" class="space-y-2 sm:space-y-3">
                         <!-- Adicionais injetados aqui -->
                     </div>
+                </div>
+
+                <!-- Campo de Observações -->
+                <div class="mb-4 sm:mb-6">
+                    <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Observações (Opcional)</label>
+                    <textarea id="modal-p-obs" rows="2" class="w-full border-gray-300 border rounded-lg p-2 sm:p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm bg-gray-50" placeholder="Ex: Tirar algum ingrediente, bem passado etc."></textarea>
                 </div>
             </div>
 
@@ -274,8 +280,7 @@
                 image: 'batata_bacon.jpeg',
                 fallbackText: 'Batata Cheddar e Bacon'
             }
-        ];
-        
+        ];        
         // Estado temporário do modal de produto
         let currentProduct = null;
         let currentProductType = null;
@@ -392,9 +397,9 @@
 
         const dbBebidas = [
             { id: 'b1', name: 'COCA-COLA 350ML', price: 7.00, desc: 'Lata 350ml (Escolha Normal ou Zero)', options: ['Normal', 'Zero'] },
-            { id: 'b2', name: 'COCA-COLA 2 litros', price: 16.00, desc: 'Garrafa 2L' },
+            { id: 'b2', name: 'Coca Cola 2 litros', price: 16.00, desc: 'Garrafa 2L' },
             { id: 'b3', name: 'Refrigerante Guaraná Kuat', price: 11.00, desc: 'Garrafa 2L' },
-            { id: 'b4', name: 'Suco Del Valle 1,5 Litro', price: 9.00, desc: 'Garrafa 1.5L' }
+            { id: 'b4', name: 'Suco Del Valle 1,500ml', price: 9.00, desc: 'Garrafa 1.5L' }
         ];
 
         // Formatador de Moeda
@@ -532,7 +537,7 @@
 
             let borderClass = type === 'combo' ? 'border-black border-2 shadow-md' : 'border-gray-100 border shadow-sm hover:shadow-md';
             let comboRibbon = type === 'combo' ? `<div class="absolute -right-8 top-5 bg-orange-600 text-white text-[10px] font-black px-10 py-1 shadow-sm rotate-45 uppercase tracking-wider">Combo</div>` : '';
-            let freeDeliveryTag = item.freeDelivery ? `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1">🚚 Entrega Inclusa</span>` : '';
+            let freeDeliveryTag = item.freeDelivery ? `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-1">🚚 Entrega Grátis</span>` : '';
 
             return `
             <div class="bg-white p-5 rounded-2xl ${borderClass} flex flex-col justify-between transition cursor-pointer relative overflow-hidden" onclick='openProductModal(${JSON.stringify(item)}, "${type}")'>
@@ -563,6 +568,7 @@
             document.getElementById('modal-p-desc').innerText = item.desc;
             document.getElementById('modal-p-price').innerText = formatMoney(item.price);
             document.getElementById('modal-p-qty').innerText = currentProductQty;
+            document.getElementById('modal-p-obs').value = ''; // Limpa o campo de observações ao abrir
 
             // Gerencia exibição de opções do produto (Normal / Zero)
             const optionsContainer = document.getElementById('options-container');
@@ -724,12 +730,14 @@
             }
 
             const itemTotalPrice = (currentProduct.price + totalAdicionais) * currentProductQty;
+            const observation = document.getElementById('modal-p-obs').value.trim();
 
             cart.push({
                 product: currentProduct,
                 qty: currentProductQty,
                 extras: extrasSelected,
                 selectedOption: currentProductOption,
+                obs: observation,
                 totalPrice: itemTotalPrice
             });
 
@@ -785,11 +793,15 @@
                 subtotal += cartItem.totalPrice;
                 let extrasHTML = '';
                 const optionLabel = cartItem.selectedOption ? ` <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold ml-1">${cartItem.selectedOption}</span>` : '';
-                if(cartItem.extras.length > 0) {
-                    extrasHTML = `<ul class="text-xs text-gray-500 mt-1 pl-4 list-disc">`;
+                
+                if(cartItem.extras.length > 0 || cartItem.obs) {
+                    extrasHTML = `<ul class="text-xs text-gray-500 mt-1 pl-4 list-disc space-y-1">`;
                     cartItem.extras.forEach(ext => {
                         extrasHTML += `<li>${ext.qty}x Adicional de ${ext.name}</li>`;
                     });
+                    if (cartItem.obs) {
+                        extrasHTML += `<li class="text-orange-600 font-medium">Obs: ${cartItem.obs}</li>`;
+                    }
                     extrasHTML += `</ul>`;
                 }
 
@@ -883,6 +895,12 @@
                         text += `   + ${item.qty * ext.qty}x ADC. ${ext.name.toUpperCase()} ${extraPriceText}\n`;
                     });
                 }
+
+                // Observações com identação
+                if (item.obs) {
+                    text += `   *OBS:* ${item.obs.toUpperCase()}\n`;
+                }
+                
                 text += `\n`; // Espaço entre os lanches
             });
             
