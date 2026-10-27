@@ -293,7 +293,6 @@ isOpen = true; // ADICIONE ESTA LINHA AQUI PARA TESTES<!DOCTYPE html>
 
         // Função de Verificação de Horário
         function checkStoreStatus() {
-            isOpen = true; // ADICIONE ESTA LINHA AQUI PARA TESTES
             const now = new Date();
             // Ajuste de fuso horário para Brasília (UTC-3)
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -311,7 +310,8 @@ isOpen = true; // ADICIONE ESTA LINHA AQUI PARA TESTES<!DOCTYPE html>
                 closesAt = 23;
             }
 
-            isOpen = (hour >= 19 && hour < closesAt);
+           // isOpen = (hour >= 19 && hour < closesAt);
+            isOpen = true; // Força como aberto para testes
 
             const badge = document.getElementById('store-status-badge');
             const dot = document.getElementById('store-status-dot');
