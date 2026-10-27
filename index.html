@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+isOpen = true; // ADICIONE ESTA LINHA AQUI PARA TESTES<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -293,6 +293,7 @@
 
         // Função de Verificação de Horário
         function checkStoreStatus() {
+            isOpen = true; // ADICIONE ESTA LINHA AQUI PARA TESTES
             const now = new Date();
             // Ajuste de fuso horário para Brasília (UTC-3)
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
