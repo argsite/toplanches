@@ -310,8 +310,8 @@
                 closesAt = 23;
             }
 
-           // isOpen = (hour >= 19 && hour < closesAt);
-            isOpen = true; // Força como aberto para testes
+           isOpen = (hour >= 19 && hour < closesAt);
+        
 
             const badge = document.getElementById('store-status-badge');
             const dot = document.getElementById('store-status-dot');
