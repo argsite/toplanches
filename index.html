@@ -100,7 +100,7 @@
         <!-- Subcategoria: Combos com Açaí -->
         <h3 class="text-lg sm:text-xl font-black text-orange-600 mt-4 mb-3 uppercase tracking-wide">Com Açaí</h3>
         <p class="text-xs sm:text-sm font-medium text-orange-800 mb-4 bg-orange-100 p-3 rounded-lg border border-orange-200">
-            ⚠️ <strong>Aviso:</strong> Os açaís inclusos nos combos acompanham Leite Condensado e Leite em Pó.
+            ⚠️ <strong>Aviso:</strong> Os açaís inclusos nos combos já acompanham Leite Condensado e Leite em Pó.
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6" id="menu-combos-acai">
             <!-- Os itens serão gerados via JS -->
@@ -179,7 +179,7 @@
                 <!-- Campo de Observações -->
                 <div class="mb-4 sm:mb-6">
                     <label class="block text-xs sm:text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Observações (Opcional)</label>
-                    <textarea id="modal-p-obs" rows="2" class="w-full border-gray-300 border rounded-lg p-2 sm:p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm bg-gray-50" placeholder="Ex: Tirar ingrediente, remover salada etc."></textarea>
+                    <textarea id="modal-p-obs" rows="2" class="w-full border-gray-300 border rounded-lg p-2 sm:p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-sm bg-gray-50" placeholder="Ex: Tirar cebola, hambúrguer bem passado..."></textarea>
                 </div>
             </div>
 
@@ -310,8 +310,7 @@
                 closesAt = 23;
             }
 
-           isOpen = (hour >= 19 && hour < closesAt);
-        
+            isOpen = (hour >= 19 && hour < closesAt);
 
             const badge = document.getElementById('store-status-badge');
             const dot = document.getElementById('store-status-dot');
@@ -339,36 +338,36 @@
 
         // BANCO DE DADOS: MAIS PEDIDOS (CARROSSEL)
         // Você pode adicionar mais fotos e itens aqui conforme desejar!
-             const dbMaisPedidos = [
+        const dbMaisPedidos = [
             {
                 id: 'l6', // ID do item no banco (ex: l6 = DUPLO BACON CHEDDAR)
                 type: 'lanche',
                 tag: '🔥 O Campeão',
-                image: 'duplo_bacon_cheddar.jpeg', // INSIRA A URL OU CAMINHO DA FOTO DO LANCHE AQUI
+                image: 'duplo_bacon_cheddar.jpg', // INSIRA A URL OU CAMINHO DA FOTO DO LANCHE AQUI
                 fallbackText: 'Duplo Bacon Cheddar'
             },
             {
-                id: 'ac5', // Açaí 1 Litro
+                id: 'ac3', // Açaí 500ml
                 type: 'acai',
                 tag: '💜 Queridinho',
-                image: 'acai_1litro.jpeg',
-                fallbackText: 'Açaí 1 Litro'
+                image: 'acai_500ml.jpg',
+                fallbackText: 'Açaí 500ml'
             },
             {
-                id: 'cq2', // Cachorro-quente Duplo
-                type: 'hotdog',
-                tag: '🌭 O Monstro',
-                image: 'cachorro-duplo.jpeg',
-                fallbackText: 'Cachorro-quente Duplo'
+                id: 'l8', // X TUDO
+                type: 'lanche',
+                tag: '⭐ O Monstro',
+                image: 'x_tudo.jpg',
+                fallbackText: 'X-Tudo'
             },
             {
-                id: 'bt5', 
-                type: 'batata',
-                tag: '🍟 Top',
-                image: 'batata_bacon.jpeg',
-                fallbackText: 'Batata Cheddar e Bacon'
+                id: 'cb14', // Super Combo X-Bacon
+                type: 'combo',
+                tag: '🍔 Combo Top',
+                image: 'super_combo_xbacon.jpg',
+                fallbackText: 'Super Combo X-Bacon'
             }
-        ];        
+        ];
         
         // Estado temporário do modal de produto
         let currentProduct = null;
@@ -411,7 +410,7 @@
             { id: 'cq6', name: 'CACHORRO QUENTE OVO', price: 20.00, desc: 'Pão, 2 salsichas, ovo, mussarela, tomate, molho especial, batata palha e maionese.' },
             { id: 'cq7', name: 'CACHORRO QUENTE FRANGO', price: 23.00, desc: 'Pão, 2 salsichas, frango, mussarela, tomate, molho especial, batata palha e maionese.' },
             { id: 'cq8', name: 'CACHORRO QUENTE MILHO', price: 21.00, desc: 'Pão, 2 salsichas, milho, mussarela, tomate, molho especial, batata palha e maionese.' },
-            /*{ id: 'cq9', name: 'CACHORRO QUENTE CARNE MOÍDA', price: 26.00, desc: 'Pão, 2 salsichas, carne moída, mussarela, tomate, molho especial, batata palha e maionese.' },*/
+            { id: 'cq9', name: 'CACHORRO QUENTE CARNE MOÍDA', price: 26.00, desc: 'Pão, 2 salsichas, carne moída, mussarela, tomate, molho especial, batata palha e maionese.' },
             { id: 'cq10', name: 'CACHORRO QUENTE CALABACON', price: 26.00, desc: 'Pão, 2 salsichas, calabresa, bacon, mussarela, tomate, molho especial, batata palha e maionese.' },
             { id: 'cq11', name: 'CACHORRO QUENTE 3 QUEIJOS', price: 26.00, desc: 'Pão, 2 salsichas, requeijão, cheddar, mussarela, tomate, molho especial, batata palha e maionese.' }
         ];
@@ -463,9 +462,9 @@
             { id: 'ac3', name: 'Açaí 500ml', price: 23.00, desc: 'Escolha até 6 adicionais', limit: 6 },
             { id: 'ac4', name: 'Açaí 770ml', price: 30.00, desc: 'Escolha até 8 adicionais', limit: 8 },
             { id: 'ac5', name: 'Açaí 1 Litro', price: 38.00, desc: 'Escolha até 10 adicionais', limit: 10 },
-            //{ id: 'ac6', name: 'Barca de Açaí 350ml', price: 25.00, desc: 'Escolha até 5 adicionais', limit: 5 },
+            { id: 'ac6', name: 'Barca de Açaí 350ml', price: 25.00, desc: 'Escolha até 5 adicionais', limit: 5 },
             { id: 'ac7', name: 'Roleta Açaí Pequena', price: 18.00, desc: 'Escolha até 4 adicionais', limit: 4 },
-            //{ id: 'ac8', name: 'Roleta Açaí Grande', price: 45.00, desc: 'Escolha até 6 adicionais', limit: 6 }
+            { id: 'ac8', name: 'Roleta Açaí Grande', price: 45.00, desc: 'Escolha até 6 adicionais', limit: 6 }
         ];
 
         const dbAdicionaisAcai = [
@@ -608,7 +607,7 @@
 
         function openMaisPedido(id, type) {
             if (!isOpen) {
-                showCustomAlert("Loja Fechada", "Desculpe, não estamos aceitando pedidos no momento.");
+                showCustomAlert("Loja Fechada", "Desculpe, não estamos aceitando pedidos no momento. Confira nosso horário de funcionamento!");
                 return;
             }
             const product = findProductById(id, type);
@@ -651,7 +650,7 @@
 
         function openProductModal(item, type) {
             if (!isOpen) {
-                showCustomAlert("Loja Fechada", "Desculpe, não estamos aceitando pedidos no momento.");
+                showCustomAlert("Loja Fechada", "Desculpe, não estamos aceitando pedidos no momento. Confira nosso horário de funcionamento!");
                 return;
             }
             currentProduct = item;
@@ -990,6 +989,11 @@
                 // Item principal
                 text += `-> ${item.qty}x ${item.product.name.toUpperCase()}${optionText} (R$ ${(item.product.price * item.qty).toFixed(2).replace('.',',')})\n`;
                 
+                // Se for combo (ID começa com 'cb'), especifica os itens inclusos no comprovante
+                if (item.product.id && item.product.id.startsWith('cb') && item.product.desc) {
+                    text += `   [ITENS: ${item.product.desc.toUpperCase()}]\n`;
+                }
+
                 // Adicionais com identação (espaços no começo) para impressora
                 if (item.extras.length > 0) {
                     item.extras.forEach(ext => {
@@ -1030,8 +1034,8 @@
             
             if (payment === 'PIX') {
                 text += `📱 *CHAVE PIX (Celular):* 15991434775\n`;
-                text += `👤 *TITULAR:* RENATA GONÇALVES DE OLIVEIRA FERREIRA\n\n`;
-                text += `☺️ *Olá! Após realizar o Pix, envie o comprovante por aqui, por gentileza.*`;
+                text += `👤 *TITULAR:* TOP LANCHES ACAI\n\n`;
+                text += `⚠️ *Por favor, envie o comprovante do PIX após esta mensagem.*`;
             } else {
                 text += `ℹ️ *Pagamento na entrega do pedido.*`;
             }
